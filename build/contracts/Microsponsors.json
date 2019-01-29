@@ -376,7 +376,7 @@
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.4.24;\n\nimport \"./Ownable.sol\";\nimport \"./Safemath.sol\";\nimport \"./ERC721.sol\";\n\ncontract Microsponsors is Ownable, ERC721 {\n\n  // TODO\n  // using SafeMath for uint256;\n  // using SafeMath32 for uint64;\n  // using SafeMath32 for uint32;\n\n  /**\n  * Events emitted in logs\n  */\n  // event Clap(uint numClaps, address sponsor, address creator);\n  event SponsorSlotCreated(address creator, uint slotId);\n  event SponsorSlotPurchased();\n\n  struct SponsorSlot {\n    uint256 slotId;\n    string websiteOrProperty; // website or property that contains slot\n    uint64 startTime; // timestamp for the block when ad begins\n    uint64 endTime; // max timestamp for (when the ad ends)\n    uint256 price; // in $\n  }\n\n  SponsorSlot[] public sponsorSlots;\n\n  mapping (uint => address) public SponsorSlotToCreator;\n  mapping (uint => address) public SponsorSlotToSponsor;\n\n  /**\n  * Init contract\n  */\n\n  constructor() public {\n  }\n\n  /**\n  * Primary public methods\n  */\n\n  // function Clap() public payable {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n  // }\n\n  function createSponsorSlot() public {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n\n\n  }\n\n  function purchaseSponsorSlot() public payable {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n\n    // ad slot is reserved by msg.sender for msg.value\n  }\n\n\n  /**\n  * Withdraw transaction fees from contract\n  */\n\n  function withdraw() public onlyOwner {\n  }\n}\n",
+  "source": "pragma solidity ^0.4.24;\n\nimport \"./Ownable.sol\";\nimport \"./Safemath.sol\";\nimport \"./ERC721.sol\";\n\ncontract Microsponsors is Ownable, ERC721 {\n\n  // TODO\n  // using SafeMath for uint256;\n  // using SafeMath32 for uint64;\n  // using SafeMath32 for uint32;\n\n  /**\n  * Events emitted in logs\n  */\n  // event Clap(uint numClaps, address sponsor, address creator);\n  event SponsorSlotCreated(address creator, uint slotId);\n  event SponsorSlotPurchased();\n\n  struct SponsorSlot {\n    uint256 slotId;\n    string websiteOrProperty; // website or property that contains slot\n    uint64 startTime; // timestamp for the block when ad begins\n    uint64 endTime; // max timestamp for (when the ad ends)\n    uint256 price; // in $\n  }\n\n  SponsorSlot[] public sponsorSlots;\n\n  mapping (uint => address) public SponsorSlotToCreator;\n  mapping (uint => address) public SponsorSlotToSponsor;\n\n  /**\n  * Init contract\n  */\n\n  constructor() public {\n  }\n\n  /**\n  * Primary public methods\n  */\n\n  // function Clap() public payable {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n  // }\n\n  function createSponsorSlot() public {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n  }\n\n  function purchaseSponsorSlot() public payable {\n    // TODO: enforce authorization per user\n    // require(isAuthorized(msg.sender));\n\n    // ad slot is reserved by msg.sender for msg.value\n  }\n\n\n  /**\n  * Withdraw transaction fees from contract\n  */\n\n  function withdraw() public onlyOwner {\n  }\n}\n",
   "sourcePath": "/Users/lauren/github/0x-hackathon-contracts/contracts/Microsponsors.sol",
   "ast": {
     "absolutePath": "/Users/lauren/github/0x-hackathon-contracts/contracts/Microsponsors.sol",
@@ -416,7 +416,7 @@
         "id": 71,
         "nodeType": "ImportDirective",
         "scope": 126,
-        "sourceUnit": 431,
+        "sourceUnit": 491,
         "src": "50:24:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -877,7 +877,7 @@
             "body": {
               "id": 113,
               "nodeType": "Block",
-              "src": "1144:93:1",
+              "src": "1144:91:1",
               "statements": []
             },
             "documentation": "Primary public methods",
@@ -902,7 +902,7 @@
               "src": "1144:0:1"
             },
             "scope": 125,
-            "src": "1108:129:1",
+            "src": "1108:127:1",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -911,7 +911,7 @@
             "body": {
               "id": 117,
               "nodeType": "Block",
-              "src": "1287:147:1",
+              "src": "1285:147:1",
               "statements": []
             },
             "documentation": null,
@@ -926,17 +926,17 @@
               "id": 115,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1269:2:1"
+              "src": "1267:2:1"
             },
             "payable": true,
             "returnParameters": {
               "id": 116,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1287:0:1"
+              "src": "1285:0:1"
             },
             "scope": 125,
-            "src": "1241:193:1",
+            "src": "1239:193:1",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
@@ -945,7 +945,7 @@
             "body": {
               "id": 123,
               "nodeType": "Block",
-              "src": "1532:5:1",
+              "src": "1530:5:1",
               "statements": []
             },
             "documentation": "Withdraw transaction fees from contract",
@@ -964,14 +964,14 @@
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 168,
-                  "src": "1522:9:1",
+                  "src": "1520:9:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "1522:9:1"
+                "src": "1520:9:1"
               }
             ],
             "name": "withdraw",
@@ -980,27 +980,27 @@
               "id": 119,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1512:2:1"
+              "src": "1510:2:1"
             },
             "payable": false,
             "returnParameters": {
               "id": 122,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1532:0:1"
+              "src": "1530:0:1"
             },
             "scope": 125,
-            "src": "1495:42:1",
+            "src": "1493:42:1",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 126,
-        "src": "99:1440:1"
+        "src": "99:1438:1"
       }
     ],
-    "src": "0:1540:1"
+    "src": "0:1538:1"
   },
   "legacyAST": {
     "absolutePath": "/Users/lauren/github/0x-hackathon-contracts/contracts/Microsponsors.sol",
@@ -1040,7 +1040,7 @@
         "id": 71,
         "nodeType": "ImportDirective",
         "scope": 126,
-        "sourceUnit": 431,
+        "sourceUnit": 491,
         "src": "50:24:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1501,7 +1501,7 @@
             "body": {
               "id": 113,
               "nodeType": "Block",
-              "src": "1144:93:1",
+              "src": "1144:91:1",
               "statements": []
             },
             "documentation": "Primary public methods",
@@ -1526,7 +1526,7 @@
               "src": "1144:0:1"
             },
             "scope": 125,
-            "src": "1108:129:1",
+            "src": "1108:127:1",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
@@ -1535,7 +1535,7 @@
             "body": {
               "id": 117,
               "nodeType": "Block",
-              "src": "1287:147:1",
+              "src": "1285:147:1",
               "statements": []
             },
             "documentation": null,
@@ -1550,17 +1550,17 @@
               "id": 115,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1269:2:1"
+              "src": "1267:2:1"
             },
             "payable": true,
             "returnParameters": {
               "id": 116,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1287:0:1"
+              "src": "1285:0:1"
             },
             "scope": 125,
-            "src": "1241:193:1",
+            "src": "1239:193:1",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
@@ -1569,7 +1569,7 @@
             "body": {
               "id": 123,
               "nodeType": "Block",
-              "src": "1532:5:1",
+              "src": "1530:5:1",
               "statements": []
             },
             "documentation": "Withdraw transaction fees from contract",
@@ -1588,14 +1588,14 @@
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
                   "referencedDeclaration": 168,
-                  "src": "1522:9:1",
+                  "src": "1520:9:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
                     "typeString": "modifier ()"
                   }
                 },
                 "nodeType": "ModifierInvocation",
-                "src": "1522:9:1"
+                "src": "1520:9:1"
               }
             ],
             "name": "withdraw",
@@ -1604,27 +1604,27 @@
               "id": 119,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1512:2:1"
+              "src": "1510:2:1"
             },
             "payable": false,
             "returnParameters": {
               "id": 122,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1532:0:1"
+              "src": "1530:0:1"
             },
             "scope": 125,
-            "src": "1495:42:1",
+            "src": "1493:42:1",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
         "scope": 126,
-        "src": "99:1440:1"
+        "src": "99:1438:1"
       }
     ],
-    "src": "0:1540:1"
+    "src": "0:1538:1"
   },
   "compiler": {
     "name": "solc",
@@ -1632,5 +1632,5 @@
   },
   "networks": {},
   "schemaVersion": "2.0.2",
-  "updatedAt": "2019-01-29T01:56:50.030Z"
+  "updatedAt": "2019-01-29T20:18:47.353Z"
 }

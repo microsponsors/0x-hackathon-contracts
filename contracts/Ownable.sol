@@ -1,3 +1,5 @@
+// Open Zeppelin Ownable
+// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/v2.0.0/contracts/ownership/Ownable.sol
 pragma solidity ^0.4.24;
 
 /**
