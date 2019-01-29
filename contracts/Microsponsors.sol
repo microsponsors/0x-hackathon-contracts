@@ -1,57 +1,58 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
-import "./ownable.sol";
-import "./safemath.sol";
-import "./erc721.sol";
+import "./Ownable.sol";
+import "./Safemath.sol";
+import "./ERC721.sol";
 
 contract Microsponsors is Ownable, ERC721 {
 
-  using SafeMath for uint256;
-  using SafeMath32 for uint32;
-  // TODO?:
-  // 2. Declare using SafeMath16 for uint16
+  // TODO
+  // using SafeMath for uint256;
+  // using SafeMath32 for uint64;
+  // using SafeMath32 for uint32;
 
   /**
   * Events emitted in logs
   */
-  event Clap(uint numClaps, address sponsor, address creator);
-  event AdSlotRegistered();
-  event AdPurchased();
+  // event Clap(uint numClaps, address sponsor, address creator);
+  event SponsorSlotCreated(address creator, uint slotId);
+  event SponsorSlotPurchased();
 
-
-  struct AdSlot {
-    string adSlotId;
-    uint32 startTime;
-    uint32 endTime;
+  struct SponsorSlot {
+    uint256 slotId;
+    string websiteOrProperty; // website or property that contains slot
+    uint64 startTime; // timestamp for the block when ad begins
+    uint64 endTime; // max timestamp for (when the ad ends)
+    uint256 price; // in $
   }
 
-  AdSlot[] public adSlots;
+  SponsorSlot[] public sponsorSlots;
 
-  mapping (uint => address) public AdSlotToSponsor;
+  mapping (uint => address) public SponsorSlotToCreator;
+  mapping (uint => address) public SponsorSlotToSponsor;
 
   /**
   * Init contract
   */
 
   constructor() public {
-    sponsorshipExchange = msg.sender;
   }
 
   /**
   * Primary public methods
   */
 
-  function Clap() public payable {
+  // function Clap() public payable {
+    // TODO: enforce authorization per user
+    // require(isAuthorized(msg.sender));
+  // }
+
+  function createSponsorSlot() public {
     // TODO: enforce authorization per user
     // require(isAuthorized(msg.sender));
   }
 
-  function createAdSlot() public {
-    // TODO: enforce authorization per user
-    // require(isAuthorized(msg.sender));
-  }
-
-  function purchaseAdSlot() public payable {
+  function purchaseSponsorSlot() public payable {
     // TODO: enforce authorization per user
     // require(isAuthorized(msg.sender));
 
@@ -64,6 +65,5 @@ contract Microsponsors is Ownable, ERC721 {
   */
 
   function withdraw() public onlyOwner {
-    owner.transfer(this.balance);
   }
 }
