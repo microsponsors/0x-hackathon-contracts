@@ -1,35 +1,50 @@
+// Microsponsors.io - DEMO ONLY!
+// This demo uses ERC721 NFTs as a marketplace for sponsorships of content creators.
+// This is a rough draft for demo purposes only (not nearly production-ready!).
+
 pragma solidity ^0.4.24;
 
 import "./Ownable.sol";
 import "./Safemath.sol";
 import "./ERC721.sol";
 
+
 contract Microsponsors is Ownable, ERC721 {
 
-  // TODO
-  // using SafeMath for uint256;
-  // using SafeMath32 for uint64;
-  // using SafeMath32 for uint32;
+  /**
+  * Events emitted
+  */
+  event PropertyCreated(uint256 propertyId, address creator, string property);
+  event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isPurchased);
+  event SponsorSlotPurchased(uint256 slotId, uint256 propertyId, address creator, address sponsor);
+
 
   /**
-  * Events emitted in logs
-  */
-  // event Clap(uint numClaps, address sponsor, address creator);
-  event SponsorSlotCreated(address creator, uint slotId);
-  event SponsorSlotPurchased();
+   * Data types
+   */
 
+  // The Microsponsors ERC721 Token:
+  // A SponsorSlot is a window of time during which a Property can be purchased by a sponsor
   struct SponsorSlot {
-    uint256 slotId;
-    string websiteOrProperty; // website or property that contains slot
-    uint64 startTime; // timestamp for the block when ad begins
-    uint64 endTime; // max timestamp for (when the ad ends)
-    uint256 price; // in $
+    uint256 id; // token id that represents the SponsorSlot
+    uint256 propertyId; // maps to Property id
+    address owner; // owner of slot; defaults to content creator when minted
+    uint32 startTime; // timestamp for when sponsorship of a Property begins
+    uint32 endTime; // max timestamp of sponsorship (when it ends)
+    bool isPurchased; // defaults to false when minted
+  }
+
+  struct Property {
+    uint256 id;
+    address creator; // the content creator who will be sponsored
+    string property; // website or property that contains the SponsorSlot (ex: "microsponsors.io-banner-north")
   }
 
   SponsorSlot[] public sponsorSlots;
+  Property[] public properties;
+  mapping (uint => address) public sponsorSlotToCreator;
+  mapping (uint => address) public sponsorSlotToSponsor;
 
-  mapping (uint => address) public SponsorSlotToCreator;
-  mapping (uint => address) public SponsorSlotToSponsor;
 
   /**
   * Init contract
@@ -38,32 +53,95 @@ contract Microsponsors is Ownable, ERC721 {
   constructor() public {
   }
 
+
   /**
   * Primary public methods
   */
 
-  // function Clap() public payable {
-    // TODO: enforce authorization per user
+  /**
+   * TODO: optimize minting process so that it does NOT cost content creators
+   * any gas to mint a tokenized sponsor slot.
+   * Can do this by reliably generating SponsorSlots with a formula
+   * and minting (storing) in contract ONLY when the token is purchased
+   */
+
+  /**
+   * Mint the new SponsorSlot NFT, assign its ownership to content creator
+   * Which will then be transfered to the sponsor when they purchase it
+   */
+  function mintSponsorSlot(
+    address _creator,
+    string _property,
+    uint32 _startTime
+  ) public returns (uint256) {
+
+    // TODO LATER enforce authorization per user
+    // require(isAuthorized(msg.sender));
+
+    uint256 _propertyId = _createProperty(_creator, _property);
+
+    // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
+    // these will obviously be longer/ more varied and schedule-able in production
+    uint32 _duration = 10 minutes;
+    uint32 _endTime = uint32(_startTime + _duration);
+    uint256 id = uint256(keccak256(_creator, _propertyId, _startTime, _duration));
+
+    require(_isValidSponsorSlot(_creator, _property, _startTime, _endTime));
+
+    sponsorSlots.push(SponsorSlot(id, _propertyId, _creator, _startTime, _endTime, false));
+    emit SponsorSlotMinted(id, _propertyId, _creator, _startTime, _endTime, false);
+
+    sponsorSlotToCreator[id] = _creator;
+
+    return id;
+  }
+
+  // function purchaseSponsorSlot() public payable {
+    // TODO LATER enforce authorization per user
     // require(isAuthorized(msg.sender));
   // }
 
-  function createSponsorSlot() public {
-    // TODO: enforce authorization per user
-    // require(isAuthorized(msg.sender));
+
+  /**
+   * Private Methods
+   */
+
+  function _createProperty(
+    address _creator,
+    string _property
+  ) private returns (uint256) {
+
+    // propertyId is a hash of _creator + _property, so we can enforce uniqueness
+    uint propertyId = uint256(keccak256(_creator, _property));
+
+    // Ensure there are no duplicate properties created:
+    if (!properties[propertyId]) {
+      properties.push(Property(propertyId, _creator, _property));
+      emit PropertyCreated(propertyId, _creator, _property);
+    }
+
+    return propertyId;
   }
 
-  function purchaseSponsorSlot() public payable {
-    // TODO: enforce authorization per user
-    // require(isAuthorized(msg.sender));
+  // Check if Property is available during time window specified by SponsorSlot
+  function _isValidSponsorSlot(
+    address _creator,
+    string _property,
+    uint32 _startTime,
+    uint32 _endTime
+  ) private view returns (bool) {
 
-    // ad slot is reserved by msg.sender for msg.value
+    // TODO
+    // ensure start time is valid/ not duplicate
+    // ensure duration time is valid/ not overlapping w others
+    return true;
   }
 
 
   /**
-  * Withdraw transaction fees from contract
+  * Withdraw from contract
   */
 
-  function withdraw() public onlyOwner {
-  }
+  // function withdraw() external onlyOwner {
+  // }
 }
