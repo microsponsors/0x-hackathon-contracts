@@ -84,13 +84,14 @@ contract Microsponsors is Ownable, ERC721 {
     uint32 _duration = 10 minutes;
     uint32 _endTime = uint32(_startTime + _duration);
 
-    require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime, _endTime));
+    // TODO
+    // require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime, _endTime));
 
     SponsorSlot memory _sponsorSlot = SponsorSlot({
-      propertyId: _propertyId,
-      creator: _creator,
-      startTime: _startTime,
-      endTime: _endTime,
+      propertyId: uint256(_propertyId),
+      owner: _creator,
+      startTime: uint32(_startTime),
+      endTime: uint32(_endTime),
       isPurchased: false
     });
     uint256 id = sponsorSlots.push(_sponsorSlot) - 1;
@@ -130,11 +131,11 @@ contract Microsponsors is Ownable, ERC721 {
 
   // Check if Property is available during time window specified by SponsorSlot
   function _isValidSponsorSlot(
-    address _creator,
-    string _propertyDescription,
-    uint32 _startTime,
-    uint32 _endTime
-  ) private view returns (bool) {
+    // address _creator,
+    // string _propertyDescription,
+    // uint32 _startTime,
+    // uint32 _endTime
+  ) private pure returns (bool) {
 
     // TODO
     // ensure start time is valid/ not duplicate
