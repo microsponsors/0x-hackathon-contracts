@@ -4,12 +4,12 @@
 
 pragma solidity ^0.4.24;
 
-import "./Ownable.sol";
-import "./Safemath.sol";
-import "./ERC721.sol";
+// import "./Ownable.sol";
+// import "./Safemath.sol";
+// import "./ERC721.sol";
 
 
-contract Microsponsors is Ownable, ERC721 {
+contract Microsponsors {
 
   /**
   * Events emitted
