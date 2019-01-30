@@ -14,9 +14,9 @@ contract Microsponsors is Ownable, ERC721 {
   /**
   * Events emitted
   */
-  event PropertyCreated(uint256 propertyId, address creator, string property);
-  event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isPurchased);
-  event SponsorSlotPurchased(uint256 slotId, uint256 propertyId, address creator, address sponsor);
+  event PropertyCreated(bytes32 propertyId, address creator, string property);
+  event SponsorSlotMinted(bytes32 slotId, bytes32 propertyId, address creator, uint32 startTime, uint32 endTime, bool isPurchased);
+  event SponsorSlotPurchased(bytes32 slotId, bytes32 propertyId, address creator, address sponsor);
 
 
   /**
@@ -26,8 +26,8 @@ contract Microsponsors is Ownable, ERC721 {
   // The Microsponsors ERC721 Token:
   // A SponsorSlot is a window of time during which a Property can be purchased by a sponsor
   struct SponsorSlot {
-    uint256 id; // token id that represents the SponsorSlot
-    uint256 propertyId; // maps to Property id
+    bytes32 id; // token id that represents the SponsorSlot
+    bytes32 propertyId; // maps to Property id
     address owner; // owner of slot; defaults to content creator when minted
     uint32 startTime; // timestamp for when sponsorship of a Property begins
     uint32 endTime; // max timestamp of sponsorship (when it ends)
@@ -35,15 +35,15 @@ contract Microsponsors is Ownable, ERC721 {
   }
 
   struct Property {
-    uint256 id;
+    bytes32 id;
     address creator; // the content creator who will be sponsored
     string property; // website or property that contains the SponsorSlot (ex: "microsponsors.io-banner-north")
   }
 
   SponsorSlot[] public sponsorSlots;
   Property[] public properties;
-  mapping (uint => address) public sponsorSlotToCreator;
-  mapping (uint => address) public sponsorSlotToSponsor;
+  mapping (bytes32 => address) public sponsorSlotToCreator;
+  mapping (bytes32 => address) public sponsorSlotToSponsor;
 
 
   /**
@@ -73,18 +73,18 @@ contract Microsponsors is Ownable, ERC721 {
     address _creator,
     string _property,
     uint32 _startTime
-  ) public returns (uint256) {
+  ) public returns (bytes32) {
 
     // TODO LATER enforce authorization per user
     // require(isAuthorized(msg.sender));
 
-    uint256 _propertyId = _createProperty(_creator, _property);
+    bytes32 _propertyId = _createProperty(_creator, _property);
 
     // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
     // these will obviously be longer/ more varied and schedule-able in production
     uint32 _duration = 10 minutes;
     uint32 _endTime = uint32(_startTime + _duration);
-    uint256 id = uint256(keccak256(_creator, _propertyId, _startTime, _duration));
+    bytes32 id = keccak256(abi.encodePacked(_creator, _propertyId, _startTime, _duration));
 
     require(_isValidSponsorSlot(_creator, _property, _startTime, _endTime));
 
@@ -109,10 +109,10 @@ contract Microsponsors is Ownable, ERC721 {
   function _createProperty(
     address _creator,
     string _property
-  ) private returns (uint256) {
+  ) private returns (bytes32) {
 
     // propertyId is a hash of _creator + _property, so we can enforce uniqueness
-    uint propertyId = uint256(keccak256(_creator, _property));
+    bytes32 propertyId = keccak256(abi.encodePacked(_creator, _property));
 
     // Ensure there are no duplicate properties created:
     if (!properties[propertyId]) {
