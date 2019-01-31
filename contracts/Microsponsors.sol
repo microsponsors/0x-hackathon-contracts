@@ -211,11 +211,10 @@ contract Microsponsors is ERC721 {
   function _transfer(address _from, address _to, uint256 _tokenId) internal {
       // transfer ownership
       sponsorSlotToOwner[_tokenId] = _to;
+      // decrement creator's SponsorSlot token count
+      ownerToSponsorSlotCount[_from]--;
 
-      // When creating new kittens _from is 0x0, but we can't account that address.
       if (_from != address(0)) {
-        // decrement creator's SponsorSlot token count
-        ownerToSponsorSlotCount[_from]--;
         // increment sponsors' SponsorSlot token count
         ownerToSponsorSlotCount[_to]++;
         // clear previous ownership approval
