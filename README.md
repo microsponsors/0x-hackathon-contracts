@@ -18,9 +18,11 @@ Fire up truffle console:
 `> u0 = web3.eth.accounts[0]`
 `> u1 = web3.eth.accounts[1]`
 
-1. Test `.mintSponsorSlot()`
+1. Test `.mintSponsorSlot()`:
 
 `> i.mintSponsorSlot(u1, 'sampleProperty', 1548890806025)`
+
+2. Test basic ERC721 methods:
 
 `> i.ownerOf(0)`
 ... should return u1 address

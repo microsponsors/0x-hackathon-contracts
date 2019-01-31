@@ -53,8 +53,7 @@ contract Microsponsors is ERC721 {
   * Init contract
   */
 
-  constructor() public {
-  }
+  constructor() public {}
 
 
   /**
@@ -70,7 +69,11 @@ contract Microsponsors is ERC721 {
 
   /**
    * Mint the new SponsorSlot NFT, assign its ownership to content creator
-   * Which will then be transfered to the sponsor when they purchase it
+   * Which will then be transfered to the sponsor when they purchase it.
+   *
+   * TODO LATER: let anyone mint during demo, but prod version should restrict
+   * minting to msg.sender by removing _creator param and setting
+   * SponsorSlot.owner to msg.sender
    */
   function mintSponsorSlot(
     address _creator,
@@ -78,7 +81,7 @@ contract Microsponsors is ERC721 {
     uint32 _startTime
   ) public returns (uint256) {
 
-    // TODO LATER enforce authorization per user onboarding
+    // TODO LATER enforce authorization per user onboarding:
     // require(isAuthorized(msg.sender));
 
     uint256 _propertyId = _createProperty(_creator, _propertyDescription);
@@ -108,7 +111,7 @@ contract Microsponsors is ERC721 {
   }
 
   // function purchaseSponsorSlot() public payable {
-    // TODO LATER enforce authorization per user onboarding
+    // TODO LATER enforce authorization per user onboarding:
     // require(isAuthorized(msg.sender));
 
     // sponsorSlotToCreator[id] = msg.sender;
@@ -131,6 +134,16 @@ contract Microsponsors is ERC721 {
     owner = sponsorSlotToOwner[_tokenId];
     require(owner != address(0));
   }
+
+  // Creator approves transfer of the token (a SponsorSlot) to the sponsor
+  // Bidding and order-matching takes place off-chain, so the slot will only
+  // change hands once, from creator to sponsor.
+  function approve(address _to, uint256 _tokenId) external {
+    require(_owns(msg.sender, _tokenId));
+    _approve(_tokenId, _to);
+    emit Approval(msg.sender, _to, _tokenId);
+  }
+
 
   /**
    * Private Methods
@@ -168,6 +181,9 @@ contract Microsponsors is ERC721 {
     return true;
   }
 
+  function _owns(address _claimant, uint256 _tokenId) private pure returns (bool) {
+    return ownerOf(_tokenId) == _claimant;
+  }
 
   /**
   * Withdraw from contract
