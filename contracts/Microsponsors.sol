@@ -165,7 +165,7 @@ contract Microsponsors is ERC721 {
 
   /// Transfer a SponsorSlot token owned by another address, for which the
   // calling address has previously been granted transfer approval by the owner.
-  function transferFrom(address _from, address _to, uint256 _tokenId) external{
+  function transferFrom(address _from, address _to, uint256 _tokenId) external {
     // Safety check to prevent against an unexpected 0x0 default.
     require(_to != address(0));
     // Disallow transfers to this contract to prevent accidental misuse.
@@ -178,6 +178,29 @@ contract Microsponsors is ERC721 {
     _transfer(_from, _to, _tokenId);
   }
 
+  function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds) {
+    uint256 tokenCount = balanceOf(_owner);
+
+    if (tokenCount == 0) {
+      return new uint256[](0);
+    } else {
+      uint256[] memory result = new uint256[](tokenCount);
+      uint256 totalSlots = totalSupply();
+      uint256 resultIndex = 0;
+
+      uint256 slotId; // SponsorSlot id
+
+      for (slotId = 0; slotId <= totalSlots; slotId++) {
+          if (sponsorSlotToOwner[slotId] == _owner) {
+              result[resultIndex] = slotId;
+              resultIndex++;
+          }
+      }
+
+      return result;
+    }
+
+  }
 
   /**
    * Private Methods
