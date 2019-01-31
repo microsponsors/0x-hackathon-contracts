@@ -53,7 +53,6 @@ contract Microsponsors is ERC721 {
   mapping (uint256 => address) public sponsorSlotIdToApproved;
 
 
-
   /**
   * Init contract
   */
@@ -115,6 +114,7 @@ contract Microsponsors is ERC721 {
     return id;
   }
 
+  // TODO:
   // function purchaseSponsorSlot() public payable {
     // TODO LATER enforce authorization per user onboarding:
     // require(isAuthorized(msg.sender));
@@ -162,6 +162,21 @@ contract Microsponsors is ERC721 {
     _transfer(msg.sender, _to, _tokenId);
   }
 
+  /// Transfer a SponsorSlot token owned by another address, for which the
+  // calling address has previously been granted transfer approval by the owner.
+  function transferFrom(address _from, address _to, uint256 _tokenId) external{
+    // Safety check to prevent against an unexpected 0x0 default.
+    require(_to != address(0));
+    // Disallow transfers to this contract to prevent accidental misuse.
+    require(_to != address(this));
+    // Check for approval and valid ownership
+    require(_approvedFor(msg.sender, _tokenId));
+    require(_owns(_from, _tokenId));
+
+    // Reassign ownership (also clears pending approvals and emits Transfer event).
+    _transfer(_from, _to, _tokenId);
+  }
+
 
   /**
    * Private Methods
@@ -207,8 +222,11 @@ contract Microsponsors is ERC721 {
     sponsorSlotIdToApproved[_tokenId] = _approved;
   }
 
-  // TODO LATER: consider disallowing owners to burn tokens when they send to
-  // address(0)
+  // TODO: for demo purposes, we may want to disable this check
+  function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
+    return sponsorSlotIdToApproved[_tokenId] == _claimant;
+  }
+
   function _transfer(address _from, address _to, uint256 _tokenId) internal {
       // transfer ownership
       sponsorSlotToOwner[_tokenId] = _to;

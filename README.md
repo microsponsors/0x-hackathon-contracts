@@ -22,7 +22,7 @@ Fire up truffle console:
 
 `> i.mintSponsorSlot(u1, 'sampleProperty', 1548890806025)`
 
-2. Test basic ERC721 methods:
+2. Test ERC721 view methods:
 
 `> i.ownerOf(0)`
 ... should return u1 address
