@@ -5,6 +5,7 @@
 pragma solidity ^0.4.24;
 
 import "./ERC721.sol";
+// TODO LATER:
 // import "./Ownable.sol";
 // import "./Safemath.sol";
 
@@ -101,7 +102,7 @@ contract Microsponsors is ERC721 {
     uint256 id = sponsorSlots.push(_sponsorSlot) - 1;
     emit SponsorSlotMinted(id, _propertyId, _creator, _startTime, _endTime, false);
     sponsorSlotToOwner[id] = _creator;
-    ownerToSponsorSlotCount[_creator] = 1;
+    ownerToSponsorSlotCount[_creator]++;
 
     return id;
   }
@@ -119,7 +120,7 @@ contract Microsponsors is ERC721 {
    * ERC721 methods
    */
   function totalSupply() public view returns (uint) {
-    return sponsorSlots.length - 1;
+    return sponsorSlots.length;
   }
 
   function balanceOf(address _owner) public view returns (uint256 count) {
