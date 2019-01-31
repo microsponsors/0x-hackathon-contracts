@@ -46,6 +46,12 @@ contract Microsponsors is ERC721 {
   mapping (uint256 => address) public sponsorSlotToOwner;
   mapping (address => uint256) public ownerToSponsorSlotCount;
 
+  // Mapping from SponsorSlot ids to an address that has been approved to call
+  // transferFrom(). Each  can only have one approved address for transfer
+  // at any time. A zero value means no approval is outstanding.
+  mapping (uint256 => address) public sponsorSlotIdToApproved;
+
+  // TODO:
   mapping (uint256 => address) public sponsorSlotToSponsor;
 
 
@@ -130,7 +136,7 @@ contract Microsponsors is ERC721 {
     return ownerToSponsorSlotCount[_owner];
   }
 
-  function ownerOf(uint256 _tokenId) external view returns (address owner) {
+  function ownerOf(uint256 _tokenId) public view returns (address owner) {
     owner = sponsorSlotToOwner[_tokenId];
     require(owner != address(0));
   }
@@ -181,8 +187,12 @@ contract Microsponsors is ERC721 {
     return true;
   }
 
-  function _owns(address _claimant, uint256 _tokenId) private pure returns (bool) {
-    return ownerOf(_tokenId) == _claimant;
+  function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
+    return (ownerOf(_tokenId) == _claimant);
+  }
+
+  function _approve(uint256 _tokenId, address _approved) internal {
+    sponsorSlotIdToApproved[_tokenId] = _approved;
   }
 
   /**
