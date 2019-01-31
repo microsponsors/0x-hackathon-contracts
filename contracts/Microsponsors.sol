@@ -12,6 +12,9 @@ import "./ERC721.sol";
 
 contract Microsponsors is ERC721 {
 
+  string public constant name = "Microsponsors";
+  string public constant symbol = "MSP";
+
   /**
   * Events emitted
   */
