@@ -150,6 +150,19 @@ contract Microsponsors is ERC721 {
     emit Approval(msg.sender, _to, _tokenId);
   }
 
+  // Creators may transfer their own SponsorSlot tokens to another address.
+  function transfer(address _to, uint256 _tokenId) external {
+      // Safety check to prevent against an unexpected 0x0 default.
+      require(_to != address(0));
+      // Disallow transfers to this contract to prevent accidental misuse.
+      // The contract should never own any tokenized SponsorSlots
+      require(_to != address(this));
+      // Only creators can transfer tokenized SponsorSlots to sponsors.
+      require(_owns(msg.sender, _tokenId));
+      // Reassign ownership, clear pending approvals, emit Transfer event.
+      _transfer(msg.sender, _to, _tokenId);
+  }
+
 
   /**
    * Private Methods
@@ -193,6 +206,25 @@ contract Microsponsors is ERC721 {
 
   function _approve(uint256 _tokenId, address _approved) internal {
     sponsorSlotIdToApproved[_tokenId] = _approved;
+  }
+
+  function _transfer(address _from, address _to, uint256 _tokenId) internal {
+      // transfer ownership
+      sponsorSlotToOwner[_tokenId] = _to;
+
+      // When creating new kittens _from is 0x0, but we can't account that address.
+      if (_from != address(0)) {
+        // decrement creator's SponsorSlot token count
+        ownerToSponsorSlotCount[_from]--;
+        // increment sponsors' SponsorSlot token count
+        ownerToSponsorSlotCount[_to]++;
+        // clear previous ownership approval
+        delete sponsorSlotIdToApproved[_tokenId];
+        // map sponsor slot to sponsor
+        sponsorSlotToSponsor[_tokenId] = _to;
+      }
+      // Emit the transfer event.
+      emit Transfer(_from, _to, _tokenId);
   }
 
   /**
