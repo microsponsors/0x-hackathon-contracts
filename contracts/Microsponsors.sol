@@ -4,18 +4,18 @@
 
 pragma solidity ^0.4.24;
 
+import "./ERC721.sol";
 // import "./Ownable.sol";
 // import "./Safemath.sol";
-// import "./ERC721.sol";
 
 
-contract Microsponsors {
+contract Microsponsors is ERC721 {
 
   /**
   * Events emitted
   */
   event PropertyCreated(uint256 propertyId, address creator, string desciption);
-  event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isPurchased);
+  event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isSponsored);
   event SponsorSlotPurchased(uint256 slotId, uint256 propertyId, address creator, address sponsor);
 
 
@@ -27,10 +27,10 @@ contract Microsponsors {
   // A SponsorSlot is a window of time during which a Property can be purchased by a sponsor
   struct SponsorSlot {
     uint256 propertyId; // maps to Property id
-    address owner; // owner of slot; defaults to content creator when minted
+    address owner; // creator of slot; defaults to content creator when minted
     uint32 startTime; // timestamp for when sponsorship of a Property begins
     uint32 endTime; // max timestamp of sponsorship (when it ends)
-    bool isPurchased; // defaults to false when minted
+    bool isSponsored; // defaults to false when minted
   }
 
   struct Property {
@@ -40,8 +40,11 @@ contract Microsponsors {
 
   SponsorSlot[] public sponsorSlots;
   Property[] public properties;
+
   mapping (uint256 => address) public propertyToCreator;
-  mapping (uint256 => address) public sponsorSlotToCreator;
+  mapping (uint256 => address) public sponsorSlotToOwner;
+  mapping (address => uint256) public ownerToSponsorSlotCount;
+
   mapping (uint256 => address) public sponsorSlotToSponsor;
 
 
@@ -92,11 +95,13 @@ contract Microsponsors {
       owner: _creator,
       startTime: uint32(_startTime),
       endTime: uint32(_endTime),
-      isPurchased: false
+      isSponsored: false
     });
+
     uint256 id = sponsorSlots.push(_sponsorSlot) - 1;
     emit SponsorSlotMinted(id, _propertyId, _creator, _startTime, _endTime, false);
-    sponsorSlotToCreator[id] = _creator;
+    sponsorSlotToOwner[id] = _creator;
+    ownerToSponsorSlotCount[_creator] = 1;
 
     return id;
   }
@@ -104,8 +109,27 @@ contract Microsponsors {
   // function purchaseSponsorSlot() public payable {
     // TODO LATER enforce authorization per user onboarding
     // require(isAuthorized(msg.sender));
+
+    // sponsorSlotToCreator[id] = msg.sender;
+
   // }
 
+
+  /**
+   * ERC721 methods
+   */
+  function totalSupply() public view returns (uint) {
+    return sponsorSlots.length - 1;
+  }
+
+  function balanceOf(address _owner) public view returns (uint256 count) {
+    return ownerToSponsorSlotCount[_owner];
+  }
+
+  function ownerOf(uint256 _tokenId) external view returns (address owner) {
+    owner = sponsorSlotToOwner[_tokenId];
+    require(owner != address(0));
+  }
 
   /**
    * Private Methods

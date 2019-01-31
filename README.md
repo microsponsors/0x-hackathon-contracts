@@ -13,10 +13,9 @@ In another terminal, deploy contract
 
 Fire up truffle console:
 `$ truffle console --network development`
-
-1. Test `.mintSponsorSlot()`
-
 `> Microsponsors.deployed().then(inst => { msInstance = inst })`
 `> u0 = web3.eth.accounts[0]`
 `> u1 = web3.eth.accounts[1]`
+
+1. Test `.mintSponsorSlot()`
 `> msInstance.mintSponsorSlot(u1, 'sampleProperty', 1548890806025)`
