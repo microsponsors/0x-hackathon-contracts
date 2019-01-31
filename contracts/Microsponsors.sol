@@ -208,6 +208,8 @@ contract Microsponsors is ERC721 {
     sponsorSlotIdToApproved[_tokenId] = _approved;
   }
 
+  // TODO LATER: consider disallowing owners to burn tokens when they send to
+  // address(0)
   function _transfer(address _from, address _to, uint256 _tokenId) internal {
       // transfer ownership
       sponsorSlotToOwner[_tokenId] = _to;
