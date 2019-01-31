@@ -151,15 +151,15 @@ contract Microsponsors is ERC721 {
 
   // Creators may transfer their own SponsorSlot tokens to another address.
   function transfer(address _to, uint256 _tokenId) external {
-      // Safety check to prevent against an unexpected 0x0 default.
-      require(_to != address(0));
-      // Disallow transfers to this contract to prevent accidental misuse.
-      // The contract should never own any tokenized SponsorSlots
-      require(_to != address(this));
-      // Only creators can transfer tokenized SponsorSlots to sponsors.
-      require(_owns(msg.sender, _tokenId));
-      // Reassign ownership, clear pending approvals, emit Transfer event.
-      _transfer(msg.sender, _to, _tokenId);
+    // Safety check to prevent against an unexpected 0x0 default.
+    require(_to != address(0));
+    // Disallow transfers to this contract to prevent accidental misuse.
+    // The contract should never own any tokenized SponsorSlots
+    require(_to != address(this));
+    // Only creators can transfer tokenized SponsorSlots to sponsors.
+    require(_owns(msg.sender, _tokenId));
+    // Reassign ownership, clear pending approvals, emit Transfer event.
+    _transfer(msg.sender, _to, _tokenId);
   }
 
 
