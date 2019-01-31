@@ -77,4 +77,8 @@ Check balances of each user:
 Check total supply:
 `> i.totalSupply()` // ... should be 1
 
+6. Test ERC721 tokensOfOwner()
+
+`> i.tokensOfOwner(u1)`
+... returns array of BigNumbers representing token ids
 
