@@ -81,4 +81,3 @@ Check total supply:
 
 `> i.tokensOfOwner(u1)`
 ... returns array of BigNumbers representing token ids
-
