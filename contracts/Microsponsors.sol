@@ -21,11 +21,12 @@ contract Microsponsors is ERC721 {
 
 
   /**
-   * Data types
+   * Data
    */
 
   // The Microsponsors ERC721 Token:
-  // A SponsorSlot is a window of time during which a Property can be purchased by a sponsor
+  // A SponsorSlot is a window of time during which a Property can be
+  // purchased by a sponsor
   struct SponsorSlot {
     uint256 propertyId; // maps to Property id
     address owner; // creator of slot; defaults to content creator when minted
