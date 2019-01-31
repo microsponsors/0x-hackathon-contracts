@@ -49,7 +49,7 @@ contract Microsponsors is ERC721 {
 
   // Mapping from SponsorSlot ids to an address that has been approved to call
   // transferFrom(). Each  can only have one approved address for transfer
-  // at any time. A zero value means no approval is outstanding.
+  // at any time.
   mapping (uint256 => address) public sponsorSlotIdToApproved;
 
 
