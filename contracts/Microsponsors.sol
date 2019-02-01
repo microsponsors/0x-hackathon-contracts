@@ -4,13 +4,11 @@
 
 pragma solidity ^0.4.24;
 
-import "./ERC721.sol";
 // TODO LATER:
 // import "./Ownable.sol";
 // import "./Safemath.sol";
 
-
-contract Microsponsors is ERC721 {
+contract Microsponsors {
 
   string public constant name = "Microsponsors";
   string public constant symbol = "MSP";
@@ -21,6 +19,9 @@ contract Microsponsors is ERC721 {
   event PropertyCreated(uint256 propertyId, address creator, string desciption);
   event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isSponsored);
   event SponsorSlotPurchased(uint256 slotId, uint256 propertyId, address creator, address sponsor);
+
+  event Transfer(address from, address to, uint256 tokenId);
+  event Approval(address owner, address approved, uint256 tokenId);
 
 
   /**
