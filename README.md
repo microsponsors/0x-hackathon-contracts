@@ -38,24 +38,30 @@ Fire up truffle console:
 `> i.mint(u1, 'sampleProperty', 1548890806025)`
 ... log output should show 2 events: PropertyCreated, Minted
 
+
 2. Test ERC721 view methods:
 
-`> i.ownerOf(0)` // 0 being id of the SponsorSlot created by u1
-... should return u1 address
+`> i.totalSupply()`
+... should return 1 (as BigNumber)
 
 `i.balanceOf(u1)`
-... should return 1 (as Big Number)
+... should return 1 (as BigNumber)
 
-`> i.totalSupply()`
-... should return 1 (as Big Number)
+`i.tokensOfOwner(u1)`
+... should return array of token ids as BigNumber
+
+`> i.ownerOf(<tokenId>)` // pass in tokenId from i.tokensOfOwner(u1)
+... should return u1 address
+
 
 3. Test ERC721 .transfer() from owner
 
-`> i.transfer(u2, 0, { from: u1 } `
+`> i.transfer(u2, <tokenId>, { from: u1 }) `
 Owner is u1, transfers SponsorSlot to u2.
 
-`> i.ownerOf(0)`
+`> i.ownerOf(<tokenId>)`
 ... should return u2's address now
+
 
 3. Test ERC721 .transfer() from non-owner -- should fail
 
@@ -63,11 +69,13 @@ Try the same .transfer, but now u1 is no longer the owner
 `> i.transfer(u2, 0, { from: u1 })`
 ... should throw exception and revert
 
+
 4. Test ERC721 .transferFrom() without authorizing first -- should fail
 
 Owner is u2 but has not approve()'d u1 to transfer token back to themselves
 `> i.transferFrom(u2, u1, 0, { from: u1 })`
 ... should throw exception and revert
+
 
 5. Test ERC721 .transferFrom()
 
@@ -90,8 +98,3 @@ Check balances of each user:
 
 Check total supply:
 `> i.totalSupply()` // ... should be 1
-
-6. Test ERC721 tokensOfOwner()
-
-`> i.tokensOfOwner(u1)`
-... returns array of BigNumbers representing token ids
