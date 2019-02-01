@@ -1,4 +1,18 @@
-# README
+# Microsponsors.io ERC721 Contract - DEMO
+
+NOTE:
+This is a rough draft for demonstration purposes only.
+
+This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
+
+Each token is a Non-Fungible Token (NFT) that represents a time window during
+which a content creators' property is available to rent by sponsors.
+Non-Fungible tokens are perfect for this use-case because each sponsorship
+slot has a unique value, and will change given its time window.
+
+Patterned after 0x Sample ERC721 ABI:
+https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/ERC721Token.json
+
 
 ## Test Scripts
 

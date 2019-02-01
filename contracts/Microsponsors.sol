@@ -1,6 +1,20 @@
-// Microsponsors.io - DEMO ONLY!
-// This demo uses ERC721 NFTs as a marketplace for sponsorships of content creators.
-// This is a rough draft for demo purposes only (not nearly production-ready!).
+/**
+* Microsponsors.io ERC721 Contract - DEMO
+*
+* NOTE:
+* This is a rough draft for demonstration purposes only.
+*
+* This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
+* Each token is a Non-Fungible Token (NFT) that represents a time window during
+* which a content creators' property is available to rent by sponsors.
+*
+* Non-Fungible tokens are perfect for this use-case because each sponsorship
+* slot has a unique value, and will change given its time window.
+*
+* Patterned after 0x Sample ERC721 ABI:
+* https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/ERC721Token.json
+*
+*/
 
 pragma solidity ^0.4.24;
 
@@ -22,6 +36,8 @@ contract Microsponsors {
 
   event Transfer(address from, address to, uint256 tokenId);
   event Approval(address owner, address approved, uint256 tokenId);
+  // TODO:
+  // event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
 
   /**
@@ -70,10 +86,13 @@ contract Microsponsors {
   */
 
   /**
-   * TODO: optimize minting process so that it does NOT cost content creators
+   * TODO: Optimize minting process so that it does NOT cost content creators
    * extra gas to mint tokenized sponsor slot(s).
    * Can do this by reliably generating SponsorSlots with a formula
-   * and minting (storing) in contract ONLY when the token is purchased.
+   * and minting (storing) in contract ONLY when the token is purchased,
+   * so that gas fees are incurred by sponsor only when they buy it (and not
+   * before).
+   * -- h/t to FuelGames.io for the pointer
    */
 
   /**
@@ -118,16 +137,6 @@ contract Microsponsors {
 
     return id;
   }
-
-  // TODO:
-  // function purchaseSponsorSlot() public payable {
-    // TODO LATER enforce authorization per user onboarding:
-    // require(isAuthorized(msg.sender));
-
-    // sponsorSlotToCreator[id] = msg.sender;
-
-  // }
-
 
   /**
    * ERC721 methods
@@ -208,6 +217,58 @@ contract Microsponsors {
     }
   }
 
+  /** TODO
+   * https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721.sol
+   * @dev Sets or unsets the approval of a given operator
+   * An operator is allowed to transfer all tokens of the sender on their behalf
+   * @param to operator address to set the approval
+   * @param approved representing the status of the approval to be set
+   */
+  // function setApprovalForAll(address to, bool approved) public {
+  //     require(to != msg.sender);
+  //     _operatorApprovals[msg.sender][to] = approved;
+  //     emit ApprovalForAll(msg.sender, to, approved);
+  // }
+
+  /** TODO
+   * https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721.sol
+   * @dev Gets the approved address for a token ID, or zero if no address set
+   * Reverts if the token ID does not exist.
+   * @param tokenId uint256 ID of the token to query the approval of
+   * @return address currently approved for the given token ID
+   */
+  // function getApproved(uint256 tokenId) public view returns (address) {
+      // require(_exists(tokenId));
+      // return _tokenApprovals[tokenId];
+  // }
+
+  /** TODO
+   * https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721.sol
+   * @dev Safely transfers the ownership of a given token ID to another address
+   * If the target address is a contract, it must implement `onERC721Received`,
+   * which is called upon a safe transfer, and return the magic value
+   * `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`; otherwise,
+   * the transfer is reverted.
+   * Requires the msg.sender to be the owner, approved, or operator
+   * @param from current owner of the token
+   * @param to address to receive the ownership of the given token ID
+   * @param tokenId uint256 ID of the token to be transferred
+   */
+  // function safeTransferFrom(address from, address to, uint256 tokenId) public {
+  //     safeTransferFrom(from, to, tokenId, "");
+  // }
+
+  /** TODO
+   * @dev Tells whether an operator is approved by a given owner
+   * @param owner owner address which you want to query the approval of
+   * @param operator operator address which you want to query the approval of
+   * @return bool whether the given operator is approved by the given owner
+   */
+  // function isApprovedForAll(address owner, address operator) public view returns (bool) {
+  //     return _operatorApprovals[owner][operator];
+  // }
+
+
   /**
    * Private Methods
    */
@@ -279,6 +340,8 @@ contract Microsponsors {
   * Withdraw from contract
   */
 
+  // TODO LATER
   // function withdraw() external onlyOwner {
   // }
+
 }
