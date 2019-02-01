@@ -1,8 +1,9 @@
 /**
 * Microsponsors.io ERC721 Contract - DEMO
+* For 0x Hackathon -  Feb 2019
 *
 * NOTE:
-* This is a rough draft for demonstration purposes only.
+* This is a very rough draft for demonstration purposes only.
 *
 * This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
 * Each token is a Non-Fungible Token (NFT) that represents a time window during
@@ -11,16 +12,14 @@
 * Non-Fungible tokens are perfect for this use-case because each sponsorship
 * slot has a unique value, and will change given its time window.
 *
-* Patterned after 0x Sample ERC721 ABI:
-* https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/ERC721Token.json
-*
+* Patterned after 0x Dummy ERC721 ABI:
+* https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/DummyERC721Token.json*
 */
 
 pragma solidity ^0.4.24;
 
 // TODO LATER:
 // import "./Ownable.sol";
-// import "./Safemath.sol";
 
 contract Microsponsors {
 
@@ -31,9 +30,6 @@ contract Microsponsors {
   * Events emitted
   */
   event PropertyCreated(uint256 propertyId, address creator, string desciption);
-  event SponsorSlotMinted(uint256 slotId, uint256 propertyId, address creator, uint32 startTime, uint32 endTime, bool isSponsored);
-  event SponsorSlotPurchased(uint256 slotId, uint256 propertyId, address creator, address sponsor);
-
   event Transfer(address from, address to, uint256 tokenId);
   event Approval(address owner, address approved, uint256 tokenId);
   // TODO:
@@ -96,14 +92,18 @@ contract Microsponsors {
    */
 
   /**
-   * Mint the new SponsorSlot NFT, assign its ownership to content creator
-   * Which will then be transfered to the sponsor when they purchase it.
+   * Mint the new SponsorSlot token, assign its ownership to content creator
+   * that is seeking sponsorship of token.
+   * Token will then be transfered to the sponsor when they purchase it.
    *
-   * TODO LATER: let anyone mint during demo, but prod version should restrict
-   * minting to msg.sender by removing _creator param and setting
-   * SponsorSlot.owner to msg.sender
+   * TODO LATER: let anyone mint during demo, but production version should
+   * restrict minting to msg.sender by removing _creator param and setting
+   * SponsorSlot.owner to msg.sender.
+   *
+   * NOTE: The .mint() arguments used here are not standard, lets see if
+   * 0x's Asset Buyer will accept it. --LG
    */
-  function mintSponsorSlot(
+  function mint(
     address _creator,
     string _propertyDescription,
     uint32 _startTime
@@ -130,10 +130,10 @@ contract Microsponsors {
       isSponsored: false
     });
 
-    uint256 id = sponsorSlots.push(_sponsorSlot) - 1;
-    emit SponsorSlotMinted(id, _propertyId, _creator, _startTime, _endTime, false);
-    sponsorSlotToOwner[id] = _creator;
+    uint256 tokenId = sponsorSlots.push(_sponsorSlot) - 1;
+    sponsorSlotToOwner[tokenId] = _creator;
     ownerToSponsorSlotCount[_creator]++;
+    emit Transfer(address(0), _creator, tokenId);
 
     return id;
   }
@@ -267,6 +267,31 @@ contract Microsponsors {
   // function isApprovedForAll(address owner, address operator) public view returns (bool) {
   //     return _operatorApprovals[owner][operator];
   // }
+
+  /** TODO
+   * @dev Internal function to burn a specific token
+   * Reverts if the token does not exist
+   * @param tokenId uint256 ID of the token being burned
+   */
+  // function _burn(uint256 tokenId) internal {
+  //     _burn(ownerOf(tokenId), tokenId);
+  // }
+
+  /** TODO
+   * @dev Tells whether an operator is approved by a given owner
+   * @param owner owner address which you want to query the approval of
+   * @param operator operator address which you want to query the approval of
+   * @return bool whether the given operator is approved by the given owner
+   */
+  // function isApprovedForAll(address owner, address operator) public view returns (bool) {
+  //     return _operatorApprovals[owner][operator];
+  // }
+
+  // TODO - ?
+  // transferOwnership()
+  // 0x Dummy ERC721 ABI specifies this function
+  // Not sure if its really necessary:
+  // https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/DummyERC721Token.json
 
 
   /**

@@ -1,7 +1,8 @@
 # Microsponsors.io ERC721 Contract - DEMO
+For 0x Hackathon - Feb 2019
 
 NOTE:
-This is a rough draft for demonstration purposes only.
+This is a very rough draft for demonstration purposes only.
 
 This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
 
@@ -11,8 +12,7 @@ Non-Fungible tokens are perfect for this use-case because each sponsorship
 slot has a unique value, and will change given its time window.
 
 Patterned after 0x Sample ERC721 ABI:
-https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/ERC721Token.json
-
+https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/DummyERC721Token.json
 
 ## Test Scripts
 
@@ -33,10 +33,10 @@ Fire up truffle console:
 `> u1 = web3.eth.accounts[1]`
 `> u2 = web3.eth.accounts[2]`
 
-1. Test `.mintSponsorSlot()`:
+1. Test `.mint()`:
 
-`> i.mintSponsorSlot(u1, 'sampleProperty', 1548890806025)`
-... log output should show 2 events: PropertyCreated, SponsorSlotMinted
+`> i.mint(u1, 'sampleProperty', 1548890806025)`
+... log output should show 2 events: PropertyCreated, Minted
 
 2. Test ERC721 view methods:
 
