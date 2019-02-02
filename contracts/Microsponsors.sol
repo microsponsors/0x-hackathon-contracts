@@ -29,7 +29,7 @@ contract Microsponsors {
   /**
   * Events emitted
   */
-  event PropertyCreated(uint256 propertyId, address creator, string desciption);
+  event PropertyCreated(address creator, string description);
   event Transfer(address from, address to, uint256 tokenId);
   event Approval(address owner, address approved, uint256 tokenId);
   // TODO:
@@ -44,22 +44,16 @@ contract Microsponsors {
   // A SponsorSlot is a window of time during which a Property can be
   // purchased by a sponsor
   struct SponsorSlot {
-    uint256 propertyId; // maps to Property id
+    string propertyDescription;
     address owner; // creator of slot; defaults to content creator when minted
     uint32 startTime; // timestamp for when sponsorship of a Property begins
     uint32 endTime; // max timestamp of sponsorship (when it ends)
     bool isSponsored; // defaults to false when minted
   }
 
-  struct Property {
-    address creator; // the content creator who will be sponsored
-    string description; // website or property that contains the SponsorSlot (ex: "microsponsors.io-banner-north")
-  }
-
   SponsorSlot[] public sponsorSlots;
-  Property[] public properties;
 
-  mapping (uint256 => address) public propertyToCreator;
+  mapping (address => string) public creatorToProperty;
   mapping (uint256 => address) public sponsorSlotToOwner;
   mapping (address => uint256) public ownerToSponsorSlotCount;
   mapping (uint256 => address) public sponsorSlotToSponsor;
@@ -112,7 +106,7 @@ contract Microsponsors {
     // TODO LATER enforce authorization per user onboarding:
     // require(isAuthorized(msg.sender));
 
-    uint256 _propertyId = _createProperty(_creator, _propertyDescription);
+    _createProperty(_creator, _propertyDescription);
 
     // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
     // these will obviously be longer/ more varied and schedule-able in production
@@ -123,7 +117,7 @@ contract Microsponsors {
     // require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime, _endTime));
 
     SponsorSlot memory _sponsorSlot = SponsorSlot({
-      propertyId: uint256(_propertyId),
+      propertyDescription: _propertyDescription,
       owner: _creator,
       startTime: uint32(_startTime),
       endTime: uint32(_endTime),
@@ -135,7 +129,7 @@ contract Microsponsors {
     ownerToSponsorSlotCount[_creator]++;
     emit Transfer(address(0), _creator, tokenId);
 
-    return id;
+    return tokenId;
   }
 
   /**
@@ -298,22 +292,12 @@ contract Microsponsors {
    * Private Methods
    */
 
-  function _createProperty(
-    address _creator,
-    string _description
-  ) private returns (uint256) {
-
-    Property memory _property = Property({
-      creator: _creator,
-      description: _description
-    });
+  function _createProperty(address _creator, string _description ) private {
 
     // TODO LATER Ensure there are no duplicate properties created
-    uint256 propertyId = properties.push(_property) - 1;
-    emit PropertyCreated(propertyId, _creator, _description);
-    propertyToCreator[propertyId] = _creator;
+    creatorToProperty[_creator] = _description;
 
-    return propertyId;
+    emit PropertyCreated(_creator, _description);
   }
 
   // Check if Property is available during time window specified by SponsorSlot
