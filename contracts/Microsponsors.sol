@@ -116,7 +116,7 @@ contract Microsponsors {
 
     // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
     // these will obviously be longer/ more varied and schedule-able in production
-    uint32 _duration = 10 minutes;
+    uint32 _duration = 4 hours;
     uint32 _endTime = uint32(_startTime + _duration);
 
     // TODO
