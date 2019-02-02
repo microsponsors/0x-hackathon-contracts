@@ -26,10 +26,14 @@ contract Microsponsors {
   string public constant name = "Microsponsors";
   string public constant symbol = "MSP";
 
+  // TODO LATER duration is hard-coded to 4hr slots for demo purposes
+  // these will be longer/ varied and schedule-able by creator in production:
+  uint32 public constant duration = 4 hours;
+
   /**
   * Events emitted
   */
-  event PropertyCreated(uint256 propertyId, address creator, string desciption);
+  event PropertyCreated(uint256 propertyId, address creator, string desrciption);
   event Transfer(address from, address to, uint256 tokenId);
   event Approval(address owner, address approved, uint256 tokenId);
   // TODO:
@@ -45,22 +49,16 @@ contract Microsponsors {
   // purchased by a sponsor
   struct SponsorSlot {
     uint256 id; // token id
-    uint256 propertyId; // maps to Property id
+    uint256 propertyId; // the property to split into tokenized time slots
     address owner; // creator of slot; defaults to content creator when minted
-    uint32 startTime; // timestamp for when sponsorship of a Property begins
-    uint32 endTime; // max timestamp of sponsorship (when it ends)
+    uint32 startTime; // timestamp for when sponsor slot of a Property begins
+    uint32 endTime; // max timestamp of sponsor slot (when it ends)
     bool isSponsored; // defaults to false when minted
   }
 
-  struct Property {
-    address creator; // the content creator who will be sponsored
-    string description; // website or property containing the SponsorSlot (ex: "microsponsors.io-banner-north")
-  }
-
   SponsorSlot[] public sponsorSlots;
-  Property[] public properties;
 
-  mapping (uint256 => address) public propertyToCreator;
+  mapping (address => uint256) public creatorToProperty;
   mapping (uint256 => address) public sponsorSlotToOwner;
   mapping (address => uint256) public ownerToSponsorSlotCount;
   mapping (uint256 => address) public sponsorSlotToSponsor;
@@ -83,16 +81,6 @@ contract Microsponsors {
   */
 
   /**
-   *  TODO: Optimize minting process so that it does NOT cost content creators
-   *  extra gas to mint tokenized sponsor slot(s).
-   *  Can do this by reliably generating SponsorSlots with a formula
-   *  and minting (storing) in contract ONLY when the token is purchased,
-   *  so that gas fees are incurred by sponsor only when they buy it (and not
-   *  before).
-   *  -- h/t to FuelGames.io for the pointer
-   */
-
-  /**
    *  Mint the new SponsorSlot token, assign its ownership to content creator
    *  that is seeking sponsorship of token.
    *  Token will then be transfered to the sponsor when they purchase it.
@@ -111,16 +99,12 @@ contract Microsponsors {
     // require(isAuthorized(msg.sender));
 
     uint256 _propertyId = _createProperty(_creator, _propertyDescription);
-
-    // TODO LATER duration is hard-coded to 4hr slots for demo purposes
-    // these will be longer/ varied and schedule-able by creator in production
-    uint32 _duration = 4 hours;
-    uint32 _endTime = uint32(_startTime + _duration);
+    uint32 _endTime = uint32(_startTime + duration);
 
     // TODO
-    // require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime, _endTime));
+    // require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime));
 
-    uint256 tokenId = generateTokenId(_propertyId, _startTime, _endTime);
+    uint256 tokenId = generateTokenId(_creator, _propertyDescription, _startTime);
 
     SponsorSlot memory _sponsorSlot = SponsorSlot({
       id: uint256(tokenId),
@@ -133,7 +117,6 @@ contract Microsponsors {
 
     sponsorSlots.push(_sponsorSlot);
     sponsorSlotToOwner[tokenId] = _creator;
-
     ownerToSponsorSlotCount[_creator]++;
 
     emit Transfer(address(0), _creator, tokenId);
@@ -141,19 +124,30 @@ contract Microsponsors {
     return tokenId;
   }
 
-  // Generate tokenId with predictable formula
-  // TODO NEXT abstract out the fn that generates property ids, do the same
-  // so that property generateTokenId() can be called by itself and return
-  // same result as mint()
+  /**
+   *  Generate token id with predictable formula
+   *  Optimizes minting process so that it does NOT cost content creators
+   *  extra gas to mint tokens.
+   *  -- h/t to FuelGames.io for the pointer
+   */
   function generateTokenId(
-    uint256 _propertyId,
-    uint32 _startTime,
-    uint32 _endTime
+    address _creator,
+    string _propertyDescription,
+    uint32 _startTime
   ) public pure returns (uint256) {
 
-    // TODO LATER: deal with overflows in far, far future
-    uint256 id = _propertyId + _startTime + _endTime;
-    return id;
+    uint32 _endTime = uint32(_startTime + duration);
+
+    return uint256(
+      keccak256(
+        abi.encodePacked(
+          _addressToBytes(_creator),
+          _propertyDescription,
+          _startTime,
+          _endTime
+        )
+      )
+    );
   }
 
 
@@ -321,7 +315,7 @@ contract Microsponsors {
 
 
   /**
-   * Private Methods
+   * Private Helper Methods
    */
 
   function _createProperty(
@@ -329,17 +323,17 @@ contract Microsponsors {
     string _description
   ) private returns (uint256) {
 
-    Property memory _property = Property({
-      creator: _creator,
-      description: _description
-    });
+    // TODO Ensure there are no duplicate properties created (per creator)
+    // TODO Skip if already created and just return property id
+    uint256 _propertyId = _generatePropertyId(_description);
+    creatorToProperty[_creator] = _propertyId;
+    emit PropertyCreated(_propertyId, _creator, _description);
 
-    // TODO LATER Ensure there are no duplicate properties created
-    uint256 propertyId = properties.push(_property) - 1;
-    propertyToCreator[propertyId] = _creator;
-    emit PropertyCreated(propertyId, _creator, _description);
+    return _propertyId;
+  }
 
-    return propertyId;
+  function _generatePropertyId(string _description) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked(_description)));
   }
 
   // Check if Property is available during time window specified by SponsorSlot
@@ -385,6 +379,20 @@ contract Microsponsors {
       }
       // Emit the transfer event.
       emit Transfer(_from, _to, _tokenId);
+  }
+
+
+  /**
+   * Private util methods
+   */
+
+  function _addressToBytes(address a) internal pure returns (bytes b){
+     assembly {
+          let m := mload(0x40)
+          mstore(add(m, 20), xor(0x140000000000000000000000000000000000000000, a))
+          mstore(0x40, add(m, 52))
+          b := m
+     }
   }
 
 }
