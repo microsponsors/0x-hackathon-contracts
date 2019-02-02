@@ -26,6 +26,9 @@ contract Microsponsors {
   string public constant name = "Microsponsors";
   string public constant symbol = "MSP";
 
+  // TODO LATER duration is hard-coded to 4hr slots for demo purposes only;
+  uint32 public constant duration = 4 hours;
+
   /**
   * Events emitted
   */
@@ -108,10 +111,6 @@ contract Microsponsors {
     // require(isAuthorized(msg.sender));
 
     uint256 _propertyId = _createProperty(_creator, _propertyName);
-    // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
-    // these will obviously be longer/ more varied and schedule-able in production
-    uint32 _duration = 4 hours;
-    uint32 _endTime = uint32(_startTime + _duration);
 
     // TODO LATER can just hardcode to validate for demo
     // require(_isValidSponsorSlot(_creator, _propertyName, _startTime, _endTime));
@@ -119,7 +118,7 @@ contract Microsponsors {
     SponsorSlot memory _sponsorSlot = SponsorSlot({
       propertyId: uint256(_propertyId),
       startTime: uint32(_startTime),
-      endTime: uint32(_endTime)
+      endTime: uint32(_startTime + duration)
     });
 
     uint256 tokenId = sponsorSlots.push(_sponsorSlot) - 1;
