@@ -29,7 +29,7 @@ contract Microsponsors {
   /**
   * Events emitted
   */
-  event PropertyCreated(address creator, string description);
+  event PropertyCreated(address owner, uint256 propertyId);
   event Transfer(address from, address to, uint256 tokenId);
   event Approval(address owner, address approved, uint256 tokenId);
   // TODO:
@@ -44,20 +44,21 @@ contract Microsponsors {
   // A SponsorSlot is a window of time during which a Property can be
   // purchased by a sponsor
   struct SponsorSlot {
-    string propertyDescription;
-    address owner; // creator of slot; defaults to content creator when minted
+    uint256 propertyId; // the property that whose time slots are tokenized
     uint32 startTime; // timestamp for when sponsorship of a Property begins
     uint32 endTime; // max timestamp of sponsorship (when it ends)
-    bool isSponsored; // defaults to false when minted
+  }
+
+  struct Property {
+    address owner; // content creators are the owners of properties
+    string propertyName; // unique name of property (ex: 'microsponsors.io-banner-north')
   }
 
   SponsorSlot[] public sponsorSlots;
+  Property[] public properties;
 
-  mapping (address => string) public creatorToProperty;
   mapping (uint256 => address) public sponsorSlotToOwner;
   mapping (address => uint256) public ownerToSponsorSlotCount;
-  mapping (uint256 => address) public sponsorSlotToSponsor;
-
   // Mapping from SponsorSlot ids to an address that has been approved to call
   // transferFrom(). Each  can only have one approved address for transfer
   // at any time.
@@ -99,29 +100,26 @@ contract Microsponsors {
    */
   function mint(
     address _creator,
-    string _propertyDescription,
+    string _propertyName,
     uint32 _startTime
   ) public returns (uint256) {
 
     // TODO LATER enforce authorization per user onboarding:
     // require(isAuthorized(msg.sender));
 
-    _createProperty(_creator, _propertyDescription);
-
+    uint256 _propertyId = _createProperty(_creator, _propertyName);
     // TODO LATER duration is hard-coded to 10 min slots for demo purposes only;
     // these will obviously be longer/ more varied and schedule-able in production
     uint32 _duration = 4 hours;
     uint32 _endTime = uint32(_startTime + _duration);
 
-    // TODO
-    // require(_isValidSponsorSlot(_creator, _propertyDescription, _startTime, _endTime));
+    // TODO LATER can just hardcode to validate for demo
+    // require(_isValidSponsorSlot(_creator, _propertyName, _startTime, _endTime));
 
     SponsorSlot memory _sponsorSlot = SponsorSlot({
-      propertyDescription: _propertyDescription,
-      owner: _creator,
+      propertyId: uint256(_propertyId),
       startTime: uint32(_startTime),
-      endTime: uint32(_endTime),
-      isSponsored: false
+      endTime: uint32(_endTime)
     });
 
     uint256 tokenId = sponsorSlots.push(_sponsorSlot) - 1;
@@ -292,18 +290,24 @@ contract Microsponsors {
    * Private Methods
    */
 
-  function _createProperty(address _creator, string _description ) private {
+  function _createProperty(address _creator, string _propertyName) private returns (uint256) {
 
+    // TODO skip if property is already created
     // TODO LATER Ensure there are no duplicate properties created
-    creatorToProperty[_creator] = _description;
+    Property memory _newProp = Property({
+      owner: _creator,
+      propertyName: _propertyName
+    });
+    uint256 _propertyId = properties.push(_newProp) - 1;
+    emit PropertyCreated(_creator, _propertyId);
 
-    emit PropertyCreated(_creator, _description);
+    return _propertyId;
   }
 
   // Check if Property is available during time window specified by SponsorSlot
   function _isValidSponsorSlot(
     // address _creator,
-    // string _propertyDescription,
+    // string _propertyName,
     // uint32 _startTime,
     // uint32 _endTime
   ) private pure returns (bool) {
@@ -338,8 +342,6 @@ contract Microsponsors {
         ownerToSponsorSlotCount[_to]++;
         // clear previous ownership approval
         delete sponsorSlotIdToApproved[_tokenId];
-        // map sponsor slot to sponsor
-        sponsorSlotToSponsor[_tokenId] = _to;
       }
       // Emit the transfer event.
       emit Transfer(_from, _to, _tokenId);
