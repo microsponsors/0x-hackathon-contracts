@@ -9,11 +9,6 @@
 * Each token is a Non-Fungible Token (NFT) that represents a time window during
 * which a content creators' property is available to rent by sponsors.
 *
-* Non-Fungible tokens are perfect for this use-case because each sponsorship
-* slot has a unique value, and will change given its time window.
-*
-* Patterned after 0x Dummy ERC721 ABI:
-* https://github.com/0xProject/0x-monorepo/blob/development/python-packages/contract_artifacts/src/zero_ex/contract_artifacts/artifacts/DummyERC721Token.json*
 */
 
 pragma solidity ^0.4.24;
@@ -26,8 +21,8 @@ contract Microsponsors {
   string public constant name = "Microsponsors";
   string public constant symbol = "MSP";
 
-  // TODO LATER duration is hard-coded to 4hr slots for demo purposes only;
-  uint32 public constant duration = 4 hours;
+  // TODO LATER duration is hard-coded to 24hr slots for demo purposes only;
+  uint32 public constant duration = 24 hours;
 
   /**
   * Events emitted
