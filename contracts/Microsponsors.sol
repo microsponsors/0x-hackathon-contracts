@@ -124,6 +124,11 @@ contract Microsponsors {
     return tokenId;
   }
 
+  function getPropertyNameFromToken(uint256 _tokenId) external view returns (string) {
+      uint256 propertyId = sponsorSlots[_tokenId].propertyId;
+      return properties[propertyId].propertyName;
+  }
+
   /**
    * ERC721 methods
    */

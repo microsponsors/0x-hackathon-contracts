@@ -54,6 +54,8 @@ Fire up truffle console:
 `> i.tokensOfOwner(u1)`
 ... returns array of BigNumbers representing token ids
 
+`i.getPropertyNameFromToken(0)`
+... returns property name from token with id of 0
 
 3. Test ERC721 .transfer() from owner
 
