@@ -1,14 +1,15 @@
 /**
-* Microsponsors.io ERC721 Contract - DEMO
-* For 0x Hackathon -  Feb 2019
 *
-* NOTE:
-* This is a very rough draft to demonstrate a limited feature set only.
-* Hackathon-level code, beware!
+* Microsponsors.io ERC721 Contract - v.01 / DEMO
+* For 0x Hackathon -  Feb 2019
 *
 * This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
 * Each token is a Non-Fungible Token (NFT) that represents a time window during
 * which a content creators' property is available to rent by sponsors.
+*
+* NOTE:
+* This is a very rough draft to demonstrate a limited feature set only.
+* Hackathon-level code, beware!
 *
 */
 
