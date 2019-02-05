@@ -3,7 +3,8 @@
 * For 0x Hackathon -  Feb 2019
 *
 * NOTE:
-* This is a very rough draft for demonstration purposes only.
+* This is a very rough draft to demonstrate a limited feature set only.
+* Hackathon-level code, beware!
 *
 * This demo uses ERC721 NFTs as a marketplace for sponsorship of content creators.
 * Each token is a Non-Fungible Token (NFT) that represents a time window during
