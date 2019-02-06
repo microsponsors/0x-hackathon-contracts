@@ -65,7 +65,6 @@ Owner is u1, transfers SponsorSlot to u2.
 `> i.ownerOf(0)`
 ... should return u2's address now
 
-
 4. Test ERC721 .transfer() from non-owner -- should fail
 
 Try the same .transfer, but now u1 is no longer the owner

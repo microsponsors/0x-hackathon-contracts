@@ -294,7 +294,8 @@ contract Microsponsors {
   function _createProperty(address _creator, string _propertyName) private returns (uint256) {
 
     // TODO skip if property is already created
-    // TODO LATER Ensure there are no duplicate properties created
+    // TODO FIXME LATER Ensure there are no duplicate properties created
+    // TODO FIXME LATER front end of dApp is hacked to handle this for now
     Property memory _newProp = Property({
       owner: _creator,
       propertyName: _propertyName
