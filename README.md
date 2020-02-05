@@ -1,3 +1,5 @@
+### :warning: :x: DEPRECATED - DO NOT USE :x: :warning:
+
 # Microsponsors.io ERC721 Contract - DEMO
 For the 0x.org Hackathon - Feb 2019
 
